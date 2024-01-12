@@ -24,6 +24,9 @@ busy = [
 'stop' : '20:20'
 }
 ]
+"сортируем список по ключу 'start' "
+sorted_list = sorted(busy, key=lambda x: x['start'])
+
 rest_list = []
 
 
@@ -40,12 +43,33 @@ def find_interval(h1: int, m1 : int, h2: int, m2: int,intetval: int):
 
 
 find_interval(9, 0, 10, 30, 30)
-# count_interval = 0
-# start_time = (9, 0)
-# finish_time = (21, 0)
-#
-#
-# for i in busy:
-#     print(i['start'], i['stop'])
-#
-#
+count_interval = 0
+start_time = (9, 0)
+finish_time = (21, 0)
+
+h1 = start_time[0]
+m1 = start_time[1]
+h2 = int(sorted_list[0]['stop'].split(':')[0])
+m2 = int(sorted_list[0]['stop'].split(':')[1])
+
+
+count_interval += find_interval(start_time[0], start_time[1], int(sorted_list[0]['start'].split(':')[0]), int(sorted_list[0]['start'].split(':')[1]), 30)
+
+
+for i in range(len(sorted_list)):
+    if i < len(sorted_list):
+        try:
+            h1 = int(sorted_list[i]['stop'].split(':')[0])
+            m1 = int(sorted_list[i]['stop'].split(':')[1])
+            h2 = int(sorted_list[i+1]['stop'].split(':')[0])
+            m2 = int(sorted_list[i+1]['stop'].split(':')[1])
+            count_interval += find_interval(h1, m1, h2, m2, 30)
+
+        except Exception:
+            h1 = int(sorted_list[i]['stop'].split(':')[0])
+            m1 = int(sorted_list[i]['stop'].split(':')[1])
+            h2 = finish_time[0]
+            m2 = finish_time[1]
+            count_interval += find_interval(h1, m1, h2, m2, 30)
+
+print('count_interval = ', count_interval)
