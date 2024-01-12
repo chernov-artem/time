@@ -7,6 +7,7 @@ from datetime import timedelta
 Требуется сформировать список свободных окон по 30 минут.
 """
 
+"список перерывов врача"
 busy = [
 {'start' : '10:30',
 'stop' : '10:50'
@@ -24,52 +25,53 @@ busy = [
 'stop' : '20:20'
 }
 ]
+
 "сортируем список по ключу 'start' "
 sorted_list = sorted(busy, key=lambda x: x['start'])
 
-rest_list = []
-
-
-def find_interval(h1: int, m1 : int, h2: int, m2: int,intetval: int):
-    "высчитывает количество окон(interval) между временем 1(h1 = часы, m2 = минуты) и временем 2"
+def find_interval(h1: int, m1 : int, h2: int, m2: int,intetval: int) -> int:
+    """высчитывает количество окон(interval) между временем 1(h1 = часы, m2 = минуты) и временем 2. Возвращает количество
+    окон между промежутками времени"""
 
     time1 = timedelta(hours=h1, minutes=m1)
     time2 = timedelta(hours=h2, minutes=m2)
-    print(time2 - time1, intetval)
     window = timedelta(minutes=intetval)
+    res = (time2 - time1) // window
 
-    return (time2 - time1) // window
+    return res
 
 
-
-find_interval(9, 0, 10, 30, 30)
+# задаем счетчик окон, начальное время, конечное время и длинну интервала
 count_interval = 0
 start_time = (9, 0)
 finish_time = (21, 0)
+window = 30
 
+# переводим начальное и конечное время в более читаемый вид для подстановки в функцию
 h1 = start_time[0]
 m1 = start_time[1]
 h2 = int(sorted_list[0]['stop'].split(':')[0])
 m2 = int(sorted_list[0]['stop'].split(':')[1])
 
+# считаем окна в первом интервале
+count_interval += find_interval(h1, m2, h2, m2, window)
 
-count_interval += find_interval(start_time[0], start_time[1], int(sorted_list[0]['start'].split(':')[0]), int(sorted_list[0]['start'].split(':')[1]), 30)
-
-
+# считаем окна в оставшемся промежутке времени
 for i in range(len(sorted_list)):
     if i < len(sorted_list):
         try:
             h1 = int(sorted_list[i]['stop'].split(':')[0])
             m1 = int(sorted_list[i]['stop'].split(':')[1])
-            h2 = int(sorted_list[i+1]['stop'].split(':')[0])
-            m2 = int(sorted_list[i+1]['stop'].split(':')[1])
-            count_interval += find_interval(h1, m1, h2, m2, 30)
+            h2 = int(sorted_list[i+1]['start'].split(':')[0])
+            m2 = int(sorted_list[i+1]['start'].split(':')[1])
+            count_interval += find_interval(h1, m1, h2, m2, window)
 
         except Exception:
             h1 = int(sorted_list[i]['stop'].split(':')[0])
             m1 = int(sorted_list[i]['stop'].split(':')[1])
             h2 = finish_time[0]
             m2 = finish_time[1]
-            count_interval += find_interval(h1, m1, h2, m2, 30)
+            count_interval += find_interval(h1, m1, h2, m2, window)
 
+# выводим результат на экран
 print('count_interval = ', count_interval)
