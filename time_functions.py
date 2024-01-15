@@ -73,5 +73,3 @@ for i in range(len(sorted_list)):
             m2 = finish_time[1]
             count_interval += find_interval(h1, m1, h2, m2, window)
 
-# выводим результат на экран
-print('count_interval = ', count_interval)
